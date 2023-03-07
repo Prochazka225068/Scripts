@@ -10,12 +10,14 @@ def cubeMaker(name,size):
 def alignObj():
 
     selObj= cmds.ls(sl=True)
+    
 
     position= cmds.xform(selObj[0], q=True, ws=True, t=True)
     rotation= cmds.xform(selObj[0], q=True, ws=True, ro=True)
 
-    cmds.xform(selObj[1], ws=True, t=[position[0], position[1], position[2]])
-    cmds.xform(selObj[1], ws=True, ro=[rotation[0], rotation[1],rotation[2]])
+    for i in selObj:
+        cmds.xform(i, ws=True, t=[position[0], position[1], position[2]])
+        cmds.xform(i, ws=True, ro=[rotation[0], rotation[1],rotation[2]])
 
 window= cmds.window(t="Jan Prochazka wire cube creator", w=400, h=250)
 cmds.columnLayout()
