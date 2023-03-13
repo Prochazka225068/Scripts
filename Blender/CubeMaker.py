@@ -7,7 +7,7 @@ class CreateCubeOperator(bpy.types.Operator):
     bl_description = "Creates Wire cube which can be used as controller"
 
     def execute(self, context):
-
+        
 
 
         return {'FINISHED'}
