@@ -1,0 +1,64 @@
+float $R_BigWheelRad = 1.3539;
+float $R_FrontWheelRad = 0.7728;
+float $R_BackWheelRad = 1.005;
+float $TrackLen = 18.55215859573222;
+
+global float $R_OldX = 0.0;
+global float $R_OldY = 0.0;
+global float $R_OldZ = 0.0;
+
+float $changeX = R_Track_Locator.translateX - $R_OldX;
+float $changeY = R_Track_Locator.translateY - $R_OldY;
+float $changeZ = R_Track_Locator.translateZ - $R_OldZ;
+
+// These variables are for determining the direction in which the tank is moving in. //
+global float $R_Old_DirDistance = 0.0;
+
+float $Change_DirDistance = R_Direction_DistanceShape.distance - $R_Old_DirDistance;
+
+float $R_Old_DirDistance = R_Direction_DistanceShape.distance;
+
+//----------------------------------------------------------------------------------//
+
+$R_OldX = R_Track_Locator.translateX;
+$R_OldY = R_Track_Locator.translateY;
+$R_OldZ = R_Track_Locator.translateZ;
+
+float $Distance = sqrt ($changeX * $changeX + $changeY * $changeY + $changeZ * $changeZ);
+
+int $switch = 1;
+float $angle = Main_Root.rotateY % 360;
+
+// Instead of using angles to determine the direction. I am using a distance between two locators. //
+// This solution fixes the curve and rotation problems. //
+if ($Change_DirDistance > 0)
+	$switch = -1;
+
+if ($Change_DirDistance < 0)
+	$switch = 1;
+
+if (($R_Old_DirDistance >= 5.99))
+	$switch = -1;
+
+if (($R_Old_DirDistance <= 0.01))
+	$switch = 1;
+
+
+// This variable & if statement check if the tank is moving only upward. //
+int $up = 1;
+
+if (($changeX == 0) && ($changeZ == 0))
+	$up = 0;
+
+if($up == 1)
+
+	// These lines have been shuffled to fix gear sync problem. //
+	R_BigWheel.rotateX = R_BigWheel.rotateX + ($Distance/(2 * 3.1415 * $R_BigWheelRad)) * $switch * 360;
+
+	R_GearWheel.rotateX = R_BigWheel.rotateX * -2;
+	R_FrontWheel.rotateX = R_BigWheel.rotateX * $R_BigWheelRad/$R_FrontWheelRad;
+	R_BackWheel.rotateX = R_BigWheel.rotateX * $R_BigWheelRad/$R_BackWheelRad;
+	
+	Main_Root.R_Tracks = (R_BigWheel.rotateX * 2 * 3.1415 * $R_BigWheelRad)/$TrackLen * 24/360;
+
+$up = 1;

@@ -1,0 +1,58 @@
+float $L_BigWheelRad = 1.3539;
+float $L_FrontWheelRad = 0.7728;
+float $L_BackWheelRad = 1.005;
+float $TrackLen = 18.55215859573222;
+
+global float $L_OldX = 0.0;
+global float $L_OldY = 0.0;
+global float $L_OldZ = 0.0;
+
+float $changeX = L_Track_Locator.translateX - $L_OldX;
+float $changeY = L_Track_Locator.translateY - $L_OldY;
+float $changeZ = L_Track_Locator.translateZ - $L_OldZ;
+
+$L_OldX = L_Track_Locator.translateX;
+$L_OldY = L_Track_Locator.translateY;
+$L_OldZ = L_Track_Locator.translateZ;
+
+float $Distance = sqrt ($changeX * $changeX + $changeY * $changeY + $changeZ * $changeZ);
+
+int $switch = 1;
+float $angle = Main_Root.rotateY % 360;
+
+int $up = 1;
+
+if ($changeZ < 0)
+	$switch = -1;
+
+if (($angle > 90) && ($angle < 270))
+	$switch = $switch * -1;
+
+if (($angle < -90) && ($angle > -270))
+	$switch = $switch * -1;
+
+if (($angle == 90) && ($changeX < 0))
+	$switch = $switch * -1;
+
+if (($angle == 270) && ($changeX > 0))
+	$switch = $switch * -1;
+
+if (($angle == -90) && ($changeX > 0))
+	$switch = $switch * -1;
+
+if (($angle == -270) && ($changeX < 0))
+	$switch = $switch * -1;
+
+if (($changeX == 0) && ($changeZ == 0))
+	$up = 0;
+
+if($up == 1)
+	L_BigWheel.rotateX = L_BigWheel.rotateX + ($Distance/(2 * 3.1415 * $L_BigWheelRad)) * $switch * 360;
+
+	L_GearWheel.rotateX = L_BigWheel.rotateX * -2;
+	L_FrontWheel.rotateX = L_BigWheel.rotateX * $L_BigWheelRad/$L_FrontWheelRad;
+	L_BackWheel.rotateX = L_BigWheel.rotateX * $L_BigWheelRad/$L_BackWheelRad;
+	
+	Main_Root.L_Tracks = (L_BigWheel.rotateX * 2 * 3.1415 * $L_BigWheelRad)/$TrackLen * 24/360;
+
+$up = 1;
