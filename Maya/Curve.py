@@ -1,24 +1,28 @@
 import maya.cmds as cmds
 
-selection = cmds.ls(sl=1)
+selection=cmds.ls(sl=1)
 
-curves = selection[0]
+curve = selection[0]
 target = selection[1]
 
-curvesP = cmds.listRelatives(curves, parent=1)[0]
+curveP = cmds.listRelatives(curve, parent=1)[0]
+
 cmds.parent(selection, absolute=1, shape=1)
-p = cmds.listRelatives(parent=1)[0]
+
+p= cmds.listRelatives(parent=1)[0]
+
 cmds.refresh()
-cmds.makeIdentity(p, apply=1, t=1, r=1, n=0, pn=1)
+
+cmds.makeIdentity(p, apply=True, t=1, r=1, s=1, n=0, pn=1)
 
 def step_two():
-    cmds.parent(curves, target, absolute=1, shape=1)
-    cmds.delete(p)
+    cmds.parent(curve, target, relative=True, shape=True)
+    cmds.delete(curveP)
 
-    children = cmds.listRelatives(curvesP, children=1)
+    children = cmds.listRelatives(curveP, children=True)
     if children == None:
-        cmds.delete(curvesP)
+        cmds.delete(curveP)
 
-    cmds.rename(curves, target+'Shape', ignoreShape=0)
+    cmds.rename(curve, target+"Shape", ignoreShape=False)
 
-cmds.evalDeferred('step_two()')
+cmds.evalDeferred("step_two()")
